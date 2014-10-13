@@ -5,7 +5,6 @@
 # ~~~~
 
 # Single endpoint for serving AngularJS
-GET     /                           @controllers.Application.index
 GET     /randomUUID                 @controllers.Application.randomUUID
 
 # User management API
@@ -14,3 +13,6 @@ POST    /user                       @controllers.Users.createUser
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
+
+# Home page and default routes for HTML5 URLs
+GET     /$jsRoute<.*>               @controllers.Application.index(jsRoute)

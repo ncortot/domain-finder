@@ -10,6 +10,8 @@ import javax.inject.Singleton
 import play.api.mvc._
 import play.api.libs.json._
 
+import models._
+
 /**
  * The Users controllers encapsulates the Rest endpoints and the interaction with the MongoDB, via ReactiveMongo
  * play plugin. This provides a non-blocking driver for mongoDB as well as some useful additions for handling JSon.
@@ -32,9 +34,6 @@ class Users extends Controller with MongoController {
   // ------------------------------------------ //
   // Using case classes + Json Writes and Reads //
   // ------------------------------------------ //
-
-  import models._
-  import models.JsonFormats._
 
   def createUser = Action.async(parse.json) {
     request =>
