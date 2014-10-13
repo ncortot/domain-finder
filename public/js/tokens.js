@@ -3,9 +3,19 @@
 angular.module('myApp.tokens', ['ngResource', 'toaster'])
 
   .controller('TokenCtrl', [
-    '$scope', '$http', 'toaster',
-    function($scope, $http, toaster) {
+    '$scope', '$http', 'toaster', 'Token',
+    function($scope, $http, toaster, Token) {
+      $scope.createToken = function() {
+        $scope.newToken.$save();
+        reset();
+      };
 
+      function reset() {
+        $scope.newToken = new Token();
+        $scope.tokenList = Token.query();
+      }
+
+      reset();
     }])
 
   .factory('Token', [
