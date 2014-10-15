@@ -10,6 +10,7 @@ POST    /api/domains                    @controllers.Domains.create
 DELETE  /api/domains/:id                @controllers.Domains.delete(id)
 POST    /api/domains/:id/:flag/:state   @controllers.Domains.updateFlag(id, flag, state: Boolean)
 POST    /api/domains/:id/score/:delta   @controllers.Domains.updateScore(id, delta: Int)
+POST    /api/domains/generate           @controllers.Domains.generate
 
 GET     /api/tokens                     @controllers.Tokens.list
 POST    /api/tokens                     @controllers.Tokens.create

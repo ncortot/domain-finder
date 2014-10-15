@@ -11,6 +11,8 @@ case class Token(
 
 object Token {
 
+  val collectionName = "tokens"
+
   implicit val tokenFormat = Json.format[Token]
 
 }

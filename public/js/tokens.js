@@ -22,6 +22,15 @@ angular.module('myApp.tokens', ['ngResource', 'toaster'])
         });
       };
 
+      $scope.generateDomains = function() {
+        $http.post('/api/domains/generate', {
+        }, function(object, responseHeaders) {
+          toaster.pop('success', response.data.message || 'Domain list updated');
+        }, function(response) {
+          toaster.pop('error', response.data.message || 'Could not generate domains');
+        });
+      };
+
       function resetNew() {
         $scope.newToken = new Token();
       }
@@ -39,5 +48,5 @@ angular.module('myApp.tokens', ['ngResource', 'toaster'])
   .factory('Token', [
     '$resource',
     function($resource) {
-      return $resource('api/tokens/:id', {id: '@_id'});
+      return $resource('/api/tokens/:id', {id: '@_id'});
     }]);

@@ -8,7 +8,7 @@ import models.Token
 @Singleton
 class Tokens extends Controller with MongoAPI[Token] {
 
-  val collectionName = "tokens"
+  val collectionName = Token.collectionName
 
   def create = createAction
 

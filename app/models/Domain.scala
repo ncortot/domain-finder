@@ -16,6 +16,8 @@ case class Domain(
 
 object Domain {
 
+  val collectionName = "domains"
+
   implicit val domainFormat = Json.format[Domain]
 
 }
