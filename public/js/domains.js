@@ -49,7 +49,9 @@ angular.module('myApp.domains', ['ngResource', 'toaster'])
       }
 
       function updateList() {
-        $scope.domainList = Domain.query();
+        var domainList = Domain.query(function() {
+          $scope.domainList = domainList;
+        });
       }
 
       resetNew();
