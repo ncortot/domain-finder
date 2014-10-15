@@ -7,7 +7,6 @@
              placeholder="New Token" ng-model="newToken.value"/>
     </div>
     <button type="submit" class="btn btn-success" id="createToken">Add</button>
-
   </form>
 
   <hr/>
@@ -21,19 +20,14 @@
     </thead>
     <tbody>
       <tr ng-repeat="token in tokenList">
-        <td>
-          {{ token.value }}
-        </td>
-        <td>
-          <a href="#" ng-click="deleteToken(token)">delete</a>
-        </td>
+        <td>{{ token.value }}</td>
+        <td><a href="#" ng-click="deleteToken(token)">delete</a></td>
       </tr>
       <tr ng-hide="tokenList.length">
-        <td colspan="2">
-          <p class="text-center">No Token Found</p>
-        </td>
+        <td colspan="2"><p class="text-center">No Token Found</p></td>
       </tr>
-      </tbody>
+    </tbody>
   </table>
+
 </div>
 

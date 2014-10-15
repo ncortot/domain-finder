@@ -6,7 +6,12 @@ import reactivemongo.bson.BSONObjectID
 
 case class Domain(
   _id: Option[BSONObjectID] = None,
-  value: String
+  name: String,
+  score: Int = 0,
+  available: Option[Boolean] = None,
+  available_at: Option[java.util.Date] = None,
+  owned: Option[Boolean] = None,
+  hidden: Option[Boolean] = None
 )
 
 object Domain {
