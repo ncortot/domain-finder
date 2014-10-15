@@ -34,9 +34,43 @@
         <td>{{ domain.available }}</td>
         <td>{{ domain.owned }}</td>
         <td>{{ domain.score }}</td>
-        <td></td>
-        <td></td>
-        <td><a href="#" ng-click="deleteDomain(domain)">delete</a></td>
+        <td><a href="#" ng-click="updateScore(domain, -1)">-1</a></td>
+        <td><a href="#" ng-click="updateScore(domain, +1)">+1</a></td>
+        <td>
+          <div class="btn-group pull-right">
+            <a class="dropdown-toggle" type="button" data-toggle="dropdown">
+              <i class="fa fa-cog"></i>
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-right" role="menu">
+              <li>
+                <a href="#" ng-if="!domain.owned" ng-click="updateFlag(domain, 'owned', true)">
+                  Mark as Owned
+                </a>
+              </li>
+              <li>
+                <a href="#" ng-if="domain.owned" ng-click="updateFlag(domain, 'owned', false)">
+                  Mark as Not Owned
+                </a>
+              </li>
+              <li>
+                <a href="#" ng-id="!domain.hidden" ng-click="updateFlag(domain, 'hidden', true)">
+                  Hide Domain
+                </a>
+              </li>
+              <li>
+                <a href="#" ng-if="domain.hidden" ng-click="updateFlag(domain, 'hidden', false)">
+                  Unhide Domain
+                </a>
+              </li>
+              <li>
+                <a href="#" ng-click="deleteDomain(domain)" class="text-danger">
+                  Delete Domain
+                </a>
+              </li>
+            </ul>
+          </div>
+        </td>
       </tr>
       <tr ng-hide="domainList.length">
         <td colspan="7"><p class="text-center">No Domain Found</p>

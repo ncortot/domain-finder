@@ -6,18 +6,18 @@ angular.module('myApp.tokens', ['ngResource', 'toaster'])
     '$scope', '$http', 'toaster', 'Token',
     function($scope, $http, toaster, Token) {
       $scope.createToken = function createToken() {
-        $scope.newToken.$save(function handleSuccess(object, responseHeaders) {
+        $scope.newToken.$save(function(object, responseHeaders) {
           resetNew();
           updateList();
-        }, function handleError(response) {
+        }, function(response) {
           toaster.pop('error', response.data.message || 'Could not save token');
         });
       };
 
-      $scope.deleteToken = function deleteToken(token) {
-        token.$delete(function handleSuccess(object, responseHeaders) {
+      $scope.deleteToken = function(token) {
+        token.$delete(function(object, responseHeaders) {
           updateList();
-        }, function handleError(response) {
+        }, function(response) {
           toaster.pop('error', response.data.message || 'Could not delete token');
         });
       };
@@ -27,7 +27,9 @@ angular.module('myApp.tokens', ['ngResource', 'toaster'])
       }
 
       function updateList() {
-        $scope.tokenList = Token.query();
+        var tokenList = Token.query(function() {
+          $scope.tokenList = tokenList;
+        });
       }
 
       resetNew();

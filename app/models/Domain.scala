@@ -7,7 +7,7 @@ import reactivemongo.bson.BSONObjectID
 case class Domain(
   _id: Option[BSONObjectID] = None,
   name: String,
-  score: Int = 0,
+  score: Int,
   available: Option[Boolean] = None,
   available_at: Option[java.util.Date] = None,
   owned: Option[Boolean] = None,
