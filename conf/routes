@@ -4,10 +4,7 @@
 # Note: @controllers syntax signifies the actual controller instance, retrieved via GlobalSettings.getController().
 # ~~~~
 
-# Single endpoint for serving AngularJS
-GET     /randomUUID                 @controllers.Application.randomUUID
-
-# User management API
+# API endpoints
 GET     /api/tokens                 @controllers.Tokens.list
 POST    /api/tokens                 @controllers.Tokens.create
 DELETE  /api/tokens/:id             @controllers.Tokens.delete(id)
