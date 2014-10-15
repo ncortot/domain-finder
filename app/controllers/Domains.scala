@@ -3,12 +3,12 @@ package controllers
 import javax.inject.Singleton
 import play.api.mvc.Controller
 
-import models.Token
+import models.Domain
 
 @Singleton
-class Tokens extends Controller with MongoAPI[Token] {
+class Domains extends Controller with MongoAPI[Domain] {
 
-  val collectionName = "tokens"
+  val collectionName = "domains"
 
   def create = createAction
 
