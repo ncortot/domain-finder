@@ -20,6 +20,11 @@ class Domains extends Controller with MongoAPI[Domain] {
   def list = listAction
 
   def updateFlag(id: String, flag: String, state: Boolean) = Action.async {
+    flag match {
+      case "owned" =>
+      case "hidden" =>
+      case _ => throw new IllegalArgumentException("Invalid flag \"" + flag + "\"")
+    }
     collection
       .update(ObjectId(id), Json.obj(
         "$set" -> Json.obj(flag -> state)
