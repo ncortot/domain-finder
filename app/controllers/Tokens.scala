@@ -16,6 +16,8 @@ class Tokens extends Controller with MongoController {
 
   private final val logger: Logger = LoggerFactory.getLogger(classOf[Tokens])
 
+  val fromObjectId = __.json.update((__ \ '_id).json.copyFrom((__ \ '_id \ '$oid).json.pick))
+
   def collection: JSONCollection = db.collection[JSONCollection]("tokens")
 
   def ObjectId(id: String): JsObject = Json.obj("_id" -> Json.obj("$oid" -> id))
@@ -29,24 +31,31 @@ class Tokens extends Controller with MongoController {
     }.getOrElse(Future.successful(BadRequest("invalid json")))
   }
 
+  def delete(id: String) = Action.async {
+    collection
+      .remove(ObjectId(id))
+      .map { lastError => Ok }
+  }
+
   def list = Action.async {
-    val cursor: Cursor[Token] = collection
+    collection
       .find(Json.obj())
       .sort(Json.obj("value" -> 1))
-      .cursor[Token]
-    val futureTokenList: Future[List[Token]] = cursor.collect[List]()
-    val futureTokensJsonArray: Future[JsArray] = futureTokenList.map { tokens =>
-      Json.arr(tokens)
-    }
-    futureTokensJsonArray.map { tokens => Ok(tokens(0)) }
+      .cursor[JsObject]
+      .collect[List]()
+      .map { mongoTokens =>
+        val apiTokens = mongoTokens map { _.transform(fromObjectId).get }
+        Ok(Json.toJson(apiTokens))
+      }
   }
 
   def update(id: String) = Action.async(parse.json) { request =>
     request.body.validate[Token].map { token =>
-      collection.update(ObjectId(id), token).map { lastError =>
-        logger.debug(s"Successfully updated with LastError: $lastError")
-        Ok(s"Token updated")
-      }
+      collection
+        .update(ObjectId(id), token)
+        .map { lastError =>
+          Ok(s"Token updated")
+        }
     }.getOrElse(Future.successful(BadRequest("invalid json")))
   }
 

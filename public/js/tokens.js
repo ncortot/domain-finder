@@ -5,17 +5,33 @@ angular.module('myApp.tokens', ['ngResource', 'toaster'])
   .controller('TokenCtrl', [
     '$scope', '$http', 'toaster', 'Token',
     function($scope, $http, toaster, Token) {
-      $scope.createToken = function() {
-        $scope.newToken.$save();
-        reset();
+      $scope.createToken = function createToken() {
+        $scope.newToken.$save(function handleSuccess(object, responseHeaders) {
+          resetNew();
+          updateList();
+        }, function handleError(response) {
+          toaster.pop('error', response.data.message || 'Could not save token');
+        });
       };
 
-      function reset() {
+      $scope.deleteToken = function deleteToken(token) {
+        token.$delete(function handleSuccess(object, responseHeaders) {
+          updateList();
+        }, function handleError(response) {
+          toaster.pop('error', response.data.message || 'Could not delete token');
+        });
+      };
+
+      function resetNew() {
         $scope.newToken = new Token();
+      }
+
+      function updateList() {
         $scope.tokenList = Token.query();
       }
 
-      reset();
+      resetNew();
+      updateList();
     }])
 
   .factory('Token', [

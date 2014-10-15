@@ -16,6 +16,7 @@
     <thead>
       <tr>
         <th>Token</th>
+        <th>&nbsp;</th>
       </tr>
     </thead>
     <tbody>
@@ -23,9 +24,12 @@
         <td>
           {{ token.value }}
         </td>
+        <td>
+          <a href="#" ng-click="deleteToken(token)">delete</a>
+        </td>
       </tr>
       <tr ng-hide="tokenList.length">
-        <td colspan="1">
+        <td colspan="2">
           <p class="text-center">No Token Found</p>
         </td>
       </tr>
