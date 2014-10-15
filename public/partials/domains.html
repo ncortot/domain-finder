@@ -1,5 +1,5 @@
 <div class="jumbotron">
-  <h2>Superdomainmultifight...</h2>
+  <h2>Superdomainmultismartfight...</h2>
   <p class="pull-right">...vote for the best domain name!</p>
 </div>
 
@@ -23,13 +23,12 @@
         <th>Available</th>
         <th>Owned</th>
         <th>Score</th>
-        <th>&nbsp;</th>
-        <th>&nbsp;</th>
+        <th colspan="2">Vote</th>
         <th>&nbsp;</th>
       </tr>
     </thead>
     <tbody>
-      <tr ng-repeat="domain in domainList">
+      <tr ng-repeat="domain in domainList | orderBy:['-score', 'name']">
         <td>{{ domain.name }}</td>
         <td>{{ domain.available }}</td>
         <td>{{ domain.owned }}</td>
