@@ -9,26 +9,27 @@ angular.module('myApp.tokens', ['ngResource', 'toaster'])
         $scope.newToken.$save(function(object, responseHeaders) {
           resetNew();
           updateList();
-        }, function(response) {
-          toaster.pop('error', response.data.message || 'Could not save token');
+        }, function(data) {
+          toaster.pop('error', data.message || 'Could not save token');
         });
       };
 
       $scope.deleteToken = function(token) {
         token.$delete(function(object, responseHeaders) {
           updateList();
-        }, function(response) {
-          toaster.pop('error', response.data.message || 'Could not delete token');
+        }, function(data) {
+          toaster.pop('error', data.message || 'Could not delete token');
         });
       };
 
       $scope.generateDomains = function() {
-        $http.post('/api/domains/generate', {
-        }, function(object, responseHeaders) {
-          toaster.pop('success', response.data.message || 'Domain list updated');
-        }, function(response) {
-          toaster.pop('error', response.data.message || 'Could not generate domains');
-        });
+        $http.post('/api/domains/generate', {})
+          .success(function() {
+            toaster.pop('success', 'Domain list updated');
+          })
+          .error(function(data) {
+            toaster.pop('error', data.message || 'Could not generate domains');
+          });
       };
 
       function resetNew() {

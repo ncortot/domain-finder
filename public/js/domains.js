@@ -22,16 +22,16 @@ angular.module('myApp.domains', ['ngResource', 'toaster'])
         $scope.newDomain.$save(function(object, responseHeaders) {
           resetNew();
           updateList();
-        }, function(response) {
-          toaster.pop('error', response.data.message || 'Could not save domain');
+        }, function(data) {
+          toaster.pop('error', data.message || 'Could not save domain');
         });
       };
 
       $scope.deleteDomain = function(domain) {
-        domain.$delete(function(object, responseHeaders) {
+        domain.$delete(function() {
           updateList();
-        }, function(response) {
-          toaster.pop('error', response.data.message || 'Could not delete domain');
+        }, function(data) {
+          toaster.pop('error', data.message || 'Could not delete domain');
         });
       };
 
@@ -39,10 +39,10 @@ angular.module('myApp.domains', ['ngResource', 'toaster'])
         domain.$updateFlag({
           flag: flag,
           state: state
-        }, function(object, responseHeaders) {
+        }, function() {
           updateList();
-        }, function(response) {
-          toaster.pop('error', response.data.message || 'Could not update domain');
+        }, function(data) {
+          toaster.pop('error', data.message || 'Could not update domain');
         });
       }
 
@@ -51,18 +51,19 @@ angular.module('myApp.domains', ['ngResource', 'toaster'])
           delta: delta
         }, function(object, responseHeaders) {
           updateList();
-        }, function(response) {
-          toaster.pop('error', response.data.message || 'Could not update domain');
+        }, function(data) {
+          toaster.pop('error', data.message || 'Could not update domain');
         });
       }
 
       $scope.validateDomains = function() {
-        $http.post('/api/domains/validate', {
-        }, function(object, responseHeaders) {
-          toaster.pop('success', response.data.message || 'Domain list validated');
-        }, function(response) {
-          toaster.pop('error', response.data.message || 'Could not validate domains');
-        });
+        $http.post('/api/domains/validate', {})
+         .success(function() {
+            toaster.pop('success', 'Domain list validated');
+         })
+         .error(function(data) {
+            toaster.pop('error', data.message || 'Could not validate domains');
+         });
       };
 
       function resetNew() {
