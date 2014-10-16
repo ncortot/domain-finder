@@ -1,7 +1,10 @@
 package models
 
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.Json
 import play.modules.reactivemongo.json.BSONFormats.BSONObjectIDFormat
+import reactivemongo.api.indexes.Index
+import reactivemongo.api.indexes.IndexType
 import reactivemongo.bson.BSONObjectID
 
 case class Domain(
@@ -14,9 +17,13 @@ case class Domain(
   hidden: Option[Boolean] = None
 )
 
-object Domain {
+object Domain extends MongoDB {
 
   val collectionName = "domains"
+
+  collection.indexesManager.ensure(Index(
+    Seq("name" -> IndexType.Ascending),
+    unique = true))
 
   implicit val domainFormat = Json.format[Domain]
 

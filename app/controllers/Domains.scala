@@ -11,9 +11,11 @@ import models.Domain
 @Singleton
 class Domains extends Controller with MongoAPI[Domain] {
 
-  val collectionName = Domain.collectionName
+  protected def collection = Domain.collection
 
-  def create = createAction
+  def create = createAction { domain =>
+    domain.copy(name = domain.name.toLowerCase)
+  }
 
   def delete(id: String) = deleteAction(id)
 

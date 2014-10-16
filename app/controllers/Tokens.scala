@@ -8,14 +8,14 @@ import models.Token
 @Singleton
 class Tokens extends Controller with MongoAPI[Token] {
 
-  val collectionName = Token.collectionName
+  protected def collection = Token.collection
 
-  def create = createAction
+  def create = createAction { token =>
+    token.copy(value = token.value.toLowerCase)
+  }
 
   def delete(id: String) = deleteAction(id)
 
   def list = listAction
-
-  def update(id: String) = updateAction(id)
 
 }

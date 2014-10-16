@@ -5,17 +5,15 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.Json
 import play.api.mvc.Action
 import play.api.mvc.Controller
-import play.modules.reactivemongo.json.collection.JSONCollection
 import scala.concurrent.Future
 import scala.sys.process._
 
 import models.Domain
 
 @Singleton
-class Validator extends Controller with MongoController {
+class Validator extends Controller with MongoHelpers {
 
-  private def getDomains: Future[List[Domain]] = db
-    .collection[JSONCollection](Domain.collectionName)
+  private def getDomains: Future[List[Domain]] = Domain.collection
     .find(Json.obj(
       "available" -> Json.obj("$exists" -> false)
     ))
@@ -44,10 +42,10 @@ class Validator extends Controller with MongoController {
     }
   }
 
-  private def updateDomain(collection: JSONCollection, domain: Domain): Future[Unit] =
+  private def updateDomain(domain: Domain): Future[Unit] =
     isAvailable(domain)
       .map { available =>
-        collection
+        Domain.collection
           .update(ObjectId(domain._id.get.stringify), Json.obj(
             "$set" -> Json.obj("available" -> available)
           ))
@@ -56,11 +54,10 @@ class Validator extends Controller with MongoController {
       .getOrElse(Future.successful(()))
 
   def validate = Action.async {
-    val collection = db.collection[JSONCollection](Domain.collectionName)
     getDomains
       .flatMap { domainList =>
         domainList.foldLeft(Future.successful(())) { (future, domain) =>
-          future flatMap { _ => updateDomain(collection, domain) }
+          future flatMap { _ => updateDomain(domain) }
         }
       }
       .map { _ =>

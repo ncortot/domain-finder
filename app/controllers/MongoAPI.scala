@@ -12,20 +12,19 @@ import play.api.mvc.Controller
 import play.modules.reactivemongo.json.collection.JSONCollection
 import scala.concurrent.Future
 
-trait MongoAPI[T] extends MongoController {
+trait MongoAPI[T] extends MongoHelpers{
   self: Controller =>
 
-  val collectionName: String
+  protected def collection: JSONCollection
 
   private final val logger: Logger = LoggerFactory.getLogger(classOf[Tokens])
 
-  protected def collection: JSONCollection = db.collection[JSONCollection](collectionName)
-
-  protected def createAction(implicit rds: Reads[T], tjs: Writes[T]) =
+  protected def createAction(f: T => T)(implicit rds: Reads[T], tjs: Writes[T]) =
     Action.async(parse.json) { request =>
       request.body.validate[T]
-        .map { token =>
-          collection.insert[T](token).map { lastError =>
+        .map(f)
+        .map { obj =>
+          collection.insert[T](obj).map { lastError =>
             logger.debug(s"Successfully inserted with LastError: $lastError")
             Created(s"Object created")
           }

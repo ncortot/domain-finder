@@ -6,24 +6,21 @@ import play.api.libs.iteratee.Enumerator
 import play.api.libs.json.Json
 import play.api.mvc.Action
 import play.api.mvc.Controller
-import play.modules.reactivemongo.json.collection.JSONCollection
 import scala.concurrent.Future
 
 import models.Domain
 import models.Token
 
 @Singleton
-class Generator extends Controller with MongoController {
+class Generator extends Controller {
 
-  private def getDomains: Future[List[String]] = db
-    .collection[JSONCollection](Domain.collectionName)
+  private def getDomains: Future[List[String]] = Domain.collection
     .find(Json.obj())
     .cursor[Domain]
     .collect[List]()
     .map { objects => objects map { _.name } }
 
-  private def getTokens: Future[List[String]] = db
-    .collection[JSONCollection](Token.collectionName)
+  private def getTokens: Future[List[String]] = Token.collection
     .find(Json.obj())
     .cursor[Token]
     .collect[List]()
@@ -53,9 +50,8 @@ class Generator extends Controller with MongoController {
       case Nil =>
         Future.successful(Ok("No new domain"))
       case newDomains =>
-        val collection = db.collection[JSONCollection](Domain.collectionName)
         val objects = newDomains.map { name => Domain(name = name, score = 0) }
-        collection
+        Domain.collection
           .bulkInsert(Enumerator.enumerate(objects))
           .map { lastError =>
             Ok(s"${newDomains.size} new domains generated")
