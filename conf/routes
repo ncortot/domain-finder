@@ -12,6 +12,7 @@ POST    /api/domains/:id/score/:delta   @controllers.Domains.updateScore(id, del
 POST    /api/domains/:id/:flag/:state   @controllers.Domains.updateFlag(id, flag, state: Boolean)
 
 POST    /api/domains/generate           @controllers.Generator.generate
+POST    /api/domains/validate           @controllers.Validator.validate
 
 GET     /api/tokens                     @controllers.Tokens.list
 POST    /api/tokens                     @controllers.Tokens.create

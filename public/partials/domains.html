@@ -12,6 +12,10 @@
              placeholder="New Domain" ng-model="newDomain.name"/>
     </div>
     <button type="submit" class="btn btn-success" id="createDomain">Add</button>
+
+    <button type="button" class="btn btn-success pull-right" ng-click="validateDomains()">
+      Check Availability
+    </button>
   </form>
 
   <hr/>
@@ -28,7 +32,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr ng-repeat="domain in domainList | orderBy:['-score', 'name']">
+      <tr ng-repeat="domain in domainList | orderBy:['-available', '-score', 'name']">
         <td>{{ domain.name }}</td>
         <td>{{ domain.available }}</td>
         <td>{{ domain.owned }}</td>

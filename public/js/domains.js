@@ -43,6 +43,15 @@ angular.module('myApp.domains', ['ngResource', 'toaster'])
         });
       }
 
+      $scope.validateDomains = function() {
+        $http.post('/api/domains/validate', {
+        }, function(object, responseHeaders) {
+          toaster.pop('success', response.data.message || 'Domain list validated');
+        }, function(response) {
+          toaster.pop('error', response.data.message || 'Could not validate domains');
+        });
+      };
+
       function resetNew() {
         $scope.newDomain = new Domain();
         $scope.newDomain.score = 0;

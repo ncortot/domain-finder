@@ -7,7 +7,6 @@ import play.api.libs.json.JsObject
 import play.api.libs.json.Json
 import play.api.libs.json.Reads
 import play.api.libs.json.Writes
-import play.api.libs.json.__
 import play.api.mvc.Action
 import play.api.mvc.Controller
 import play.modules.reactivemongo.json.collection.JSONCollection
@@ -19,12 +18,6 @@ trait MongoAPI[T] extends MongoController {
   val collectionName: String
 
   private final val logger: Logger = LoggerFactory.getLogger(classOf[Tokens])
-
-  protected val fromObjectId = __.json.update(
-    (__ \ '_id).json.copyFrom((__ \ '_id \ '$oid).json.pick)
-  )
-
-  protected def ObjectId(id: String): JsObject = Json.obj("_id" -> Json.obj("$oid" -> id))
 
   protected def collection: JSONCollection = db.collection[JSONCollection](collectionName)
 

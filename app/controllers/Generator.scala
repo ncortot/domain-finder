@@ -30,7 +30,10 @@ class Generator extends Controller with MongoController {
     .map { objects => objects map { _.value } }
 
   private def generateDomains(tokenA: String, tokenB: String): List[String] =
-    List(tokenA + tokenB + ".com")
+    List(
+      tokenA + ".com",
+      tokenA + tokenB + ".com"
+    )
 
   private def generateDomains(tokens: List[String]): List[String] =
     for {
