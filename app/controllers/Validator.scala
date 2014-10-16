@@ -22,6 +22,11 @@ class Validator extends Controller with MongoController {
     .cursor[Domain]
     .collect[List]()
 
+  private def notAvailable(line: String): Boolean =
+    line.startsWith("Registrant") ||
+    line.startsWith("  Registrant") ||
+    line.startsWith("   Registrar")
+
   private def isAvailable(domain: Domain): Option[Boolean] = {
     val output = new StringBuffer
     s"whois -H ${domain.name}".run(BasicIO(false, output, None)).exitValue()
@@ -29,7 +34,7 @@ class Validator extends Controller with MongoController {
       case lines if lines.exists(_.startsWith("No match for ")) =>
         println(s"Domain ${domain.name} available")
         Some(true)
-      case lines if lines.exists(_.startsWith("Registrant")) =>
+      case lines if lines.exists(notAvailable) =>
         println(s"Domain ${domain.name} not available")
         Some(false)
       case lines =>

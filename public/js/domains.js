@@ -5,6 +5,19 @@ angular.module('myApp.domains', ['ngResource', 'toaster'])
   .controller('DomainCtrl', [
     '$scope', '$http', 'toaster', 'Domain',
     function($scope, $http, toaster, Domain) {
+      $scope.filters = {
+        available: true,
+        score: true
+      }
+
+      $scope.filterDomain = function(domain) {
+        if ($scope.filters.available && (!domain.available && !domain.owned))
+          return false;
+        if ($scope.filters.score && domain.score < 0)
+          return false;
+        return true;
+      }
+
       $scope.createDomain = function() {
         $scope.newDomain.$save(function(object, responseHeaders) {
           resetNew();
