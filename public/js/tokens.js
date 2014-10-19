@@ -24,9 +24,6 @@ angular.module('myApp.tokens', ['ngResource', 'toaster'])
 
       $scope.generateDomains = function() {
         $http.post('/api/domains/generate', {})
-          .success(function() {
-            toaster.pop('success', 'Domain list updated');
-          })
           .error(function(data) {
             toaster.pop('error', data.message || 'Could not generate domains');
           });

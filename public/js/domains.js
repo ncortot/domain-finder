@@ -58,9 +58,6 @@ angular.module('myApp.domains', ['ngResource', 'toaster'])
 
       $scope.validateDomains = function() {
         $http.post('/api/domains/validate', {})
-         .success(function() {
-            toaster.pop('success', 'Domain list validated');
-         })
          .error(function(data) {
             toaster.pop('error', data.message || 'Could not validate domains');
          });

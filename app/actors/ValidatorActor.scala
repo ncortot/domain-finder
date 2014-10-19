@@ -1,17 +1,62 @@
-package controllers
+package actors
 
-import javax.inject.Singleton
+import akka.actor.Actor
+import akka.actor.ActorLogging
+import akka.actor.ActorRef
+import akka.actor.FSM
+import akka.actor.Props
+import play.libs.Akka
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.Json
-import play.api.mvc.Action
-import play.api.mvc.Controller
 import scala.concurrent.Future
 import scala.sys.process._
 
+import controllers.MongoHelpers
 import models.Domain
 
-@Singleton
-class Validator extends Controller with MongoHelpers {
+import ValidatorActor._
+
+object ValidatorActor {
+
+  lazy val validatorActor: ActorRef = Akka.system.actorOf(Props(classOf[ValidatorActor]))
+
+  sealed trait State
+  case object Idle extends State
+  case object Active extends State
+  case object Pending extends State
+
+  sealed trait Data
+  case object Empty extends Data
+
+  case object Validate
+  case object Completed
+
+}
+
+class ValidatorActor extends Actor with ActorLogging with FSM[State, Data] with MongoHelpers {
+
+  startWith(Idle, Empty)
+
+  when(Idle) {
+    case Event(Validate, _) =>
+      validateDomains.map { _ => self ! Completed }
+      goto(Active)
+  }
+
+  when(Active) {
+    case Event(Completed, _) =>
+      goto(Idle)
+    case Event(Validate, _) =>
+      goto(Pending)
+  }
+
+  when(Pending) {
+    case Event(Completed, _) =>
+      self ! Validate
+      goto(Idle)
+    case Event(Validate, _) =>
+      stay()
+  }
 
   private def getDomains: Future[List[Domain]] = Domain.collection
     .find(Json.obj(
@@ -30,14 +75,14 @@ class Validator extends Controller with MongoHelpers {
     s"whois -H ${domain.name}".run(BasicIO(false, output, None)).exitValue()
     output.toString.split('\n') match {
       case lines if lines.exists(_.startsWith("No match for ")) =>
-        println(s"Domain ${domain.name} available")
+        log.info(s"Domain ${domain.name} available")
         Some(true)
       case lines if lines.exists(notAvailable) =>
-        println(s"Domain ${domain.name} not available")
+        log.info(s"Domain ${domain.name} not available")
         Some(false)
       case lines =>
-        println(s"Error checking domain ${domain.name}")
-        println("Lines: " + lines.mkString("\n"))
+        log.error(s"Error checking domain ${domain.name}")
+        log.error("Lines: " + lines.mkString("\n"))
         None
     }
   }
@@ -53,7 +98,7 @@ class Validator extends Controller with MongoHelpers {
       }
       .getOrElse(Future.successful(()))
 
-  def validate = Action.async {
+  private def validateDomains: Future[Unit] =
     getDomains
       .flatMap { domainList =>
         domainList.foldLeft(Future.successful(())) { (future, domain) =>
@@ -61,8 +106,7 @@ class Validator extends Controller with MongoHelpers {
         }
       }
       .map { _ =>
-        Ok("Domains validated")
+        log.info("Domains validated")
       }
-  }
 
 }

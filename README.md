@@ -1,7 +1,7 @@
 Domain-Finder
 ===========
 
-An application to find available domain names, implemented using the Play Framework, AngularJS, Bootstrap and MongoDB.
+An application to find available domain names, implemented using the Play Framework, Akka, AngularJS, Bootstrap and MongoDB.
 
 
 Getting Started

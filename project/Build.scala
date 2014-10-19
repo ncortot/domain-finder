@@ -7,6 +7,8 @@ object ApplicationBuild extends Build {
 
   val appDependencies = Seq(
     "com.google.inject" % "guice" % "3.0",
+    "com.typesafe.akka" %% "akka-actor" % "2.2.4",
+    "com.typesafe.akka" %% "akka-slf4j" % "2.2.4",
     "javax.inject" % "javax.inject" % "1",
     "org.reactivemongo" %% "reactivemongo" % "0.10.0",
     "org.reactivemongo" %% "play2-reactivemongo" % "0.10.2",
