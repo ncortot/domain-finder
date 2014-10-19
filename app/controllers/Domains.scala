@@ -7,6 +7,7 @@ import play.api.mvc.Action
 import play.api.mvc.Controller
 
 import models.Domain
+import models.MongoDB
 
 @Singleton
 class Domains extends Controller with MongoAPI[Domain] {
@@ -28,7 +29,7 @@ class Domains extends Controller with MongoAPI[Domain] {
       case _ => throw new IllegalArgumentException("Invalid flag \"" + flag + "\"")
     }
     collection
-      .update(ObjectId(id), Json.obj(
+      .update(MongoDB.ObjectId(id), Json.obj(
         "$set" -> Json.obj(flag -> state)
       ))
       .map { lastError =>
@@ -38,7 +39,7 @@ class Domains extends Controller with MongoAPI[Domain] {
 
   def updateScore(id: String, delta: Int) = Action.async {
     collection
-      .update(ObjectId(id), Json.obj(
+      .update(MongoDB.ObjectId(id), Json.obj(
         "$inc" -> Json.obj("score" -> delta)
       ))
       .map { lastError =>

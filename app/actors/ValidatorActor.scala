@@ -11,8 +11,8 @@ import play.api.libs.json.Json
 import scala.concurrent.Future
 import scala.sys.process._
 
-import controllers.MongoHelpers
 import models.Domain
+import models.MongoDB
 
 import ValidatorActor._
 
@@ -33,7 +33,7 @@ object ValidatorActor {
 
 }
 
-class ValidatorActor extends Actor with ActorLogging with FSM[State, Data] with MongoHelpers {
+class ValidatorActor extends Actor with ActorLogging with FSM[State, Data] {
 
   startWith(Idle, Empty)
 
@@ -91,7 +91,7 @@ class ValidatorActor extends Actor with ActorLogging with FSM[State, Data] with 
     isAvailable(domain)
       .map { available =>
         Domain.collection
-          .update(ObjectId(domain._id.get.stringify), Json.obj(
+          .update(MongoDB.ObjectId(domain._id.get.stringify), Json.obj(
             "$set" -> Json.obj("available" -> available)
           ))
           .map { lastError => () }

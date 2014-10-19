@@ -3,21 +3,24 @@ package controllers
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import play.api.libs.json.JsObject
-import play.api.libs.json.Json
-import play.api.libs.json.Reads
-import play.api.libs.json.Writes
+import play.api.libs.json._
 import play.api.mvc.Action
 import play.api.mvc.Controller
 import play.modules.reactivemongo.json.collection.JSONCollection
 import scala.concurrent.Future
 
-trait MongoAPI[T] extends MongoHelpers{
+import models.MongoDB
+
+trait MongoAPI[T] {
   self: Controller =>
 
   protected def collection: JSONCollection
 
   private final val logger: Logger = LoggerFactory.getLogger(classOf[Tokens])
+
+  protected val fromObjectId = __.json.update(
+    (__ \ '_id).json.copyFrom((__ \ '_id \ '$oid).json.pick)
+  )
 
   protected def createAction(f: T => T)(implicit rds: Reads[T], tjs: Writes[T]) =
     Action.async(parse.json) { request =>
@@ -34,7 +37,7 @@ trait MongoAPI[T] extends MongoHelpers{
 
   protected def deleteAction(id: String) = Action.async {
     collection
-      .remove(ObjectId(id))
+      .remove(MongoDB.ObjectId(id))
       .map { lastError => Ok }
   }
 
@@ -53,7 +56,7 @@ trait MongoAPI[T] extends MongoHelpers{
       request.body.validate[T]
         .map { token =>
           collection
-            .update(ObjectId(id), token)
+            .update(MongoDB.ObjectId(id), token)
             .map { lastError =>
               Ok(s"Object updated")
             }
